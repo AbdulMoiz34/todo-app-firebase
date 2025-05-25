@@ -1,5 +1,5 @@
-import { signOutHandler } from "./firebase.js";
-import { showToast } from "./toast.js";
+import { signOutHandler } from "../firebase.js";
+import { showToast } from "../toast.js";
 
 const logoutBtn = document.getElementById("logout-btn");
 const navToggleBtn = document.getElementById("nav-toggle-btn");
@@ -32,6 +32,5 @@ const logoutHandler = async () => {
 }
 
 checkUserLoggedIn();
-
 navToggleBtn.addEventListener("click", toggleNavIcons);
 logoutBtn.addEventListener("click", logoutHandler);

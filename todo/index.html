@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo</title>
+    <!-- Tailwind CSS Link -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Font awesome cdn -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="../style.css">
+
+</head>
+
+<body>
+    <main class="w-full h-full">
+        <header class="sticky top-0 z-50 w-full border-b border-gray-200 bg-white shadow-sm">
+            <nav class="max-w-screen-xl mx-auto flex items-center justify-between px-4 py-3">
+                <a href="/" class="flex items-center space-x-2">
+                    <span class="text-2xl font-bold text-blue-600 dark:text-blue-400">Todo App</span>
+                </a>
+                <button id="nav-toggle-btn"
+                    class="sm:hidden p-2 cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-300 rounded-md">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+                <div id="nav-menu"
+                    class="absolute top-16 left-0 sm:static hidden flex shadow-md mt-2 sm:m-0 sm:shadow-none flex-col items-stretch text-center sm:p-0 py-2 w-full sm:w-auto sm:flex sm:flex-row gap-4 sm:gap-6 sm:items-center bg-white sm:bg-transparent">
+                    <a href="/" class="nav-link hover:underline">Home</a>
+                    <a href="../about/index.html" class="nav-link hover:underline">About Us</a>
+                    <a href="#" class="nav-link hover:underline">Your Todos</a>
+                    <a href="../user/signup/index.html"
+                        class="nav-link cursor-pointer sm:inline-block mt-2 sm:mt-0 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-all"
+                        id="signup-btn">Sign Up</a>
+                    <button style="display: none;" id="logout-btn"
+                        class="cursor-pointer sm:inline-block mt-2 sm:mt-0 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-all">
+                        Logout
+                    </button>
+                </div>
+            </nav>
+        </header>
+
+        <div class="content pb-16">
+            <button onclick="openAddTodoModal()" title="Add Todo"
+                class="cursor-pointer fixed bottom-6 right-6 z-40 bg-blue-600 hover:bg-blue-700 text-white w-14 h-14 rounded-full shadow-lg text-3xl flex items-center justify-center">
+                +
+            </button>
+            <!-- Add Todo Modal -->
+            <div id="addTodoModal" tabindex="-1"
+                class="hidden fixed top-0 left-0 right-0 z-50 justify-center items-center w-full h-screen bg-black/50">
+                <div class="relative w-full max-w-md max-h-full mx-auto mt-20">
+                    <div class="relative bg-white backdrop-blur-sm rounded-lg shadow cursor-pointer">
+                        <button type="button" onclick="closeAddTodoModal()"
+                            class="absolute top-3 right-2.5 text-gray-500 hover:text-gray-800">
+                            <svg class="w-5 h-5" fill="currentColor">
+                                <path
+                                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" />
+                            </svg>
+                        </button>
+                        <form id="add-todo-form" class="p-6">
+                            <h2 class="text-2xl font-bold text-center mb-6 text-gray-900">Add Todo</h2>
+                            <div class="flex flex-col gap-4">
+                                <input required type="text" id="title" placeholder="Title"
+                                    class="text-gray-900 focus:outline-blue-400 border border-gray-300 p-2 rounded-md">
+                                <textarea id="description" placeholder="Description"
+                                    class="text-gray-900 border focus:outline-blue-400 border-gray-300 p-2 rounded-md"></textarea>
+                                <div class="flex justify-end gap-2 mt-4">
+                                    <button type="button" onclick="closeAddTodoModal()"
+                                        class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-md cursor-pointer">Cancel</button>
+                                    <button type="submit"
+                                        class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md cursor-pointer">Add</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-col items-center">
+                <div class="sticky top-26 bg-white/30 backdrop-blur-sm ">
+                    <input id="search-task-inp" type="text"
+                        class="w-[320px] px-6 py-2 border-1 outline-blue-600 rounded-md border-blue-500"
+                        placeholder="Search for task...">
+                </div>
+                <h1 class="text-4xl font-bold text-center mt-16">Your Todos</h1>
+                <div class="flex flex-col gap-4 p-4 w-4/5 sm:w-3/5 m-auto mt-4" id="todos">
+                    <div role="status" class="flex justify-center hidden" id="loader">
+                        <svg aria-hidden="true"
+                            class="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+                            viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                                fill="currentColor" />
+                            <path
+                                d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                                fill="currentFill" />
+                        </svg>
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                    <!-- <div class="flex items-start justify-between bg-white p-4 rounded shadow">
+                        <div>
+                            <h3 class="text-lg font-semibold">Buy groceries</h3>
+                            <p class="text-sm text-gray-600 ">Milk, Bread, Eggs</p>
+                        </div>
+                        <div class="flex gap-2 items-center">
+                            <button class="text-green-600 hover:text-green-800" title="Mark as complete"><i
+                                    class="fa-solid fa-check"></i></button>
+                            <button class="text-red-500 hover:text-red-700 cursor-pointer" title="Delete"><i
+                                    class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+                    <div class="flex items-start justify-between bg-white p-4 rounded shadow">
+                        <div>
+                            <h3 class="text-lg font-semibold">Buy groceries</h3>
+                            <p class="text-sm text-gray-600 ">Milk, Bread, Eggs</p>
+                        </div>
+                        <div class="flex gap-2 items-center">
+                            <button class="text-green-600 hover:text-green-800" title="Mark as complete"><i
+                                    class="fa-solid fa-check"></i></button>
+                            <button class="text-yellow-500 hover:text-yellow-700 cursor-pointer">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                            <button class="text-red-500 hover:text-red-700 cursor-pointer" title="Delete"><i
+                                    class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+        <!-- <footer
+            class="fixed bottom-0 bg-gradient-to-r from-blue-300 via-blue-400 to-blue-500 text-white py-4 shadow-md w-full">
+            <p class="text-center text-sm sm:text-base">
+                <a href="https://github.com/abdulmoiz34" target="_blank"
+                    class="font-semibold underline hover:underline-offset-4 hover:text-yellow-200 transition-all duration-300 ease-in-out mr-1">
+                    Abdul Moiz
+                </a>
+                &copy; <span>2025</span>
+            </p>
+        </footer> -->
+
+        <!-- Modal -->
+        <div id="editTodoModal" tabindex="-1" aria-hidden="true"
+            class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-screen max-h-full bg-black/50 bg-opacity-50">
+            <div class="relative w-full max-w-md max-h-full mx-auto mt-20">
+                <!-- Modal content -->
+                <div class="relative bg-white backdrop-blur-sm rounded-lg shadow dark:bg-gray-800">
+                    <!-- Modal header -->
+                    <div class="flex items-center justify-between p-4 border-b rounded-t dark:border-gray-600">
+                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                            Update Todo
+                        </h3>
+                        <button type="button"
+                            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 flex items-center justify-center dark:hover:bg-gray-700 dark:hover:text-white"
+                            data-modal-hide="editTodoModal" onclick="closeModal()">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                    <!-- Modal body -->
+                    <form id="edit-todo-form" class="p-6 space-y-4">
+                        <div>
+                            <label for="edit-title"
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Todo Title</label>
+                            <input placeholder="Enter title." type="text" id="edit-title" name="title" required
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" />
+                        </div>
+                        <div>
+                            <label for="edit-description"
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Description</label>
+                            <textarea placeholder="Enter description." id="edit-description" name="description" rows="3"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"></textarea>
+                        </div>
+                        <!-- Buttons -->
+                        <div class="flex justify-end gap-2 pt-4 border-t dark:border-gray-600">
+                            <button onclick="closeModal()" type="button" data-modal-hide="editTodoModal"
+                                class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded hover:bg-gray-300 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600">
+                                Cancel
+                            </button>
+                            <button type="submit"
+                                class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                                Update
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div id="toast-container" class="fixed bottom-5 right-5 z-50 space-y-2"></div>
+    </main>
+
+
+    <!-- Flowbite CDN JS -->
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
+    <script src="app.js" type="module"></script>
+</body>
+
+</html>

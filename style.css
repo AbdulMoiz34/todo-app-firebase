@@ -1,0 +1,13 @@
+/* Google fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,200;0,400;0,500;1,400;1,500&display=swap');
+
+body,
+html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+* {
+    font-family: 'Poppins', sans-serif;
+}

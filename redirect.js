@@ -1,22 +1,16 @@
-const redirect = () => {
+
+export const redirect = () => {
+    const isLoggedIn = localStorage.getItem("loggedIn") == "true";
     const currentPath = location.pathname;
     const authPages = ["login", "signup"];
     const mainPages = ["profile"];
-    const isLoggedIn = false;
 
-
-    for (let i = 0; i < authPages.length; i++) {
-        if (currentPath.includes(authPages[i]) && isLoggedIn) {
-            location = "/"; 
-            break;
-        }
+    if (isLoggedIn && authPages.some(page => currentPath.includes(page))) {
+        location = "/";
+        return;
     }
-    for (let i = 0; i < mainPages.length; i++) {
-        if (currentPath.includes(mainPages[i]) && !isLoggedIn) {
-            location = "/user/signup/";
-            break;
-        }
+    
+    if (!isLoggedIn && mainPages.some(page => currentPath.includes(page))) {
+        location.href = "/user/signup/";
     }
 }
-
-redirect();
