@@ -25,7 +25,9 @@ const loginHandler = async (e) => {
 }
 
 loginForm.addEventListener("submit", loginHandler);
+
 googleSignInBtn.addEventListener("click", async () => {
+    googleSignInBtn.disabled = true;
     try {
         await signInWithGoogle();
         localStorage.setItem("loggedIn", true);

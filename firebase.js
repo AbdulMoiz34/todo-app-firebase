@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, signInWithPopup, GoogleAuthProvider } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, updateProfile, sendEmailVerification } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js';
 import { getFirestore, doc, addDoc, serverTimestamp, collection, query, where, orderBy, onSnapshot, deleteDoc, updateDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -18,7 +18,6 @@ const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
 
 onAuthStateChanged(auth, (user) => {
-    console.log(user);
     localStorage.setItem("uid", user ? user.uid : null);
 });
 
@@ -117,4 +116,4 @@ const findTodos = async (q) => {
     return todos;
 }
 
-export { registerUser, signInWithEmailPass, signOutHandler, addTodo, getTodosQuery, onSnapshot, deleteTodo, updateTodo, completedTodo, signInWithGoogle, findTodos };
+export { onAuthStateChanged, auth, registerUser, signInWithEmailPass, signOutHandler, addTodo, getTodosQuery, onSnapshot, deleteTodo, updateTodo, completedTodo, signInWithGoogle, findTodos, updateProfile, sendEmailVerification };

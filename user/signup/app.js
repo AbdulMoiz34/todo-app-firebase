@@ -9,6 +9,7 @@ const signUpWithEmailPass = async () => {
     event.preventDefault();
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
+    const username = document.getElementById("fullName").value;
     try {
         signUpBtn.disabled = true;
         await registerUser(email, password);

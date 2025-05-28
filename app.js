@@ -31,6 +31,8 @@ const logoutHandler = async () => {
     }
 }
 
+
+
 checkUserLoggedIn();
 
 navToggleBtn.addEventListener("click", toggleNavIcons);
