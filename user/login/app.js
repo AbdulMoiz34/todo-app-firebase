@@ -17,7 +17,6 @@ const loginHandler = async (e) => {
         localStorage.setItem("loggedIn", true);
         setTimeout(() => location = "/", 500);
     } catch (err) {
-        console.log(err);
         showToast(err.message, "error");
     } finally {
         loginBtn.disabled = false;

@@ -16,8 +16,10 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
+let currentUser = undefined;
 
 onAuthStateChanged(auth, (user) => {
+    currentUser = user;
     localStorage.setItem("uid", user ? user.uid : null);
 });
 
@@ -80,7 +82,6 @@ const deleteTodo = async (docId) => {
 }
 
 const updateTodo = async (docId, todo) => {
-    debugger;
     try {
         await updateDoc(doc(db, "todos", docId), todo);
         return "Todo Updated.";
@@ -115,5 +116,27 @@ const findTodos = async (q) => {
     });
     return todos;
 }
+const changeUsername = async (name) => {
+    try {
+        await updateProfile(currentUser, {
+            displayName: name
+        });
 
-export { onAuthStateChanged, auth, registerUser, signInWithEmailPass, signOutHandler, addTodo, getTodosQuery, onSnapshot, deleteTodo, updateTodo, completedTodo, signInWithGoogle, findTodos, updateProfile, sendEmailVerification };
+        return "name is updated.";
+    } catch (err) {
+        throw err;
+    }
+}
+
+const updatePhotoURL = async (url) => {
+    try {
+        await updateProfile(currentUser, {
+            photoURL: url
+        });
+        return "image is updated.";
+    } catch (err) {
+        throw err;
+    }
+}
+
+export { onAuthStateChanged, auth, registerUser, signInWithEmailPass, signOutHandler, addTodo, getTodosQuery, onSnapshot, deleteTodo, updateTodo, completedTodo, signInWithGoogle, findTodos, sendEmailVerification, changeUsername, updatePhotoURL };

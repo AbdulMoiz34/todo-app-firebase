@@ -168,7 +168,6 @@ const closeModal = () => {
 
 const editTodoHandler = async () => {
     event.preventDefault();
-    debugger;
     const todo = document.getElementById("edit-title").value.trim();
     const desc = document.getElementById("edit-description").value.trim();
     const { docId } = editTodoModal.dataset;

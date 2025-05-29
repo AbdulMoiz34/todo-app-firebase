@@ -1,4 +1,4 @@
-import { registerUser } from "../../firebase.js";
+import { changeUsername, registerUser } from "../../firebase.js";
 import { redirect } from "../../redirect.js";
 import { showToast } from "../../toast.js";
 
@@ -13,6 +13,7 @@ const signUpWithEmailPass = async () => {
     try {
         signUpBtn.disabled = true;
         await registerUser(email, password);
+        await changeUsername(username);
         showToast("Signup Successful.");
         localStorage.setItem("loggedIn", true);
         setTimeout(() => location = "/", 500);

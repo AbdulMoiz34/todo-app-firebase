@@ -1,12 +1,15 @@
-import { signOutHandler, onAuthStateChanged, auth, updateProfile, sendEmailVerification } from "../firebase.js";
+import { signOutHandler, onAuthStateChanged, auth, changeUsername, sendEmailVerification, updatePhotoURL } from "../firebase.js";
 import { redirect } from "../redirect.js";
 import { showToast } from "../toast.js";
 
 const logoutBtn = document.getElementById("logout-btn");
 const navToggleBtn = document.getElementById("nav-toggle-btn");
 const signupBtn = document.getElementById("signup-btn");
+
 const loader = document.getElementById("loader");
 const heroSec = document.getElementById("hero-section");
+const imageUploadInput = document.getElementById("image-upload");
+
 const editNameModel = document.getElementById("editNameModal");
 const editNameModalBtn = document.getElementById("editNameModal-btn");
 const editNameForm = document.getElementById("edit-name-form");
@@ -37,20 +40,20 @@ const logoutHandler = async () => {
     }
 }
 
-
-const username = document.getElementById("user-name");
-const email = document.getElementById("user-email");
-const image = document.getElementById("image");
+const userNameEl = document.getElementById("user-name");
+const userEmailEl = document.getElementById("user-email");
+const userImageEl = document.getElementById("image");
 
 const verifyStatus = document.getElementById("verification-status");
 const verifyIcon = document.getElementById("verification-icon");
 const verifyBtn = document.getElementById("verification-btn");
 let currentUser = undefined;
+
 onAuthStateChanged(auth, (user) => {
     currentUser = user;
-    username.textContent = user.displayName ?? "Guest";
-    email.textContent = user.email;
-    image.src = user.photoURL ?? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPRh3FMc3PtkN2OmE93bMurFRmwxjxNJoeIg&s";
+    userNameEl.textContent = user.displayName ?? "Guest";
+    userEmailEl.textContent = user.email;
+    userImageEl.src = user.photoURL ?? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPRh3FMc3PtkN2OmE93bMurFRmwxjxNJoeIg&s";
     loader.classList.add("hidden");
     heroSec.classList.remove("hidden");
 
@@ -71,12 +74,10 @@ const updateUsername = async () => {
     event.preventDefault();
     const newName = document.getElementById("new-name").value;
     try {
-        await updateProfile(currentUser, {
-            displayName: newName
-        });
+        const msg = await changeUsername(newName);
+        showToast(msg);
+        userNameEl.textContent = newName;
         closeModal();
-        username.textContent = newName;
-        showToast("name is updated.");
     } catch (err) {
         showToast(err.message, "error");
     }
@@ -87,8 +88,6 @@ const emailVerifyHandler = async () => {
         await sendEmailVerification(currentUser);
         showToast("Verification email sent.");
     } catch (err) {
-        console.log(err);
-        
         showToast(err.message, "error");
     }
 }
@@ -100,6 +99,21 @@ const closeModal = () => {
     editNameModel.classList.add("hidden");
 }
 
+const uploadImageOnCloudinary = async (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "UserImages");
+    try {
+        const res = await fetch("https://api.cloudinary.com/v1_1/moiz34/upload", {
+            method: "POST",
+            body: formData
+        });
+        const data = await res.json();
+        return data.secure_url;
+    } catch (err) {
+        throw err;
+    }
+}
 
 window.closeModal = closeModal;
 verifyBtn.onclick = emailVerifyHandler;
@@ -108,4 +122,16 @@ editNameModalBtn.addEventListener("click", openModal);
 navToggleBtn.addEventListener("click", toggleNavIcons);
 logoutBtn.addEventListener("click", logoutHandler);
 editNameForm.addEventListener("submit", updateUsername);
+
+imageUploadInput.addEventListener('change', async (event) => {
+    try {
+        showToast("Uploading...", "warning");
+        const url = await uploadImageOnCloudinary(event.target.files[0]);
+        await updatePhotoURL(url);
+        showToast("Image uploaded.");
+        userImageEl.src = url;
+    } catch (err) {
+        showToast(err.message, "error");
+    }
+});
 redirect();

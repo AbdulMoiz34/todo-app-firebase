@@ -3,7 +3,6 @@ import { showToast } from "./toast.js";
 
 const logoutBtn = document.getElementById("logout-btn");
 const navToggleBtn = document.getElementById("nav-toggle-btn");
-const signupBtn = document.getElementById("signup-btn");
 
 const toggleNavIcons = () => {
     const navIcons = document.getElementById("nav-menu");
@@ -12,12 +11,16 @@ const toggleNavIcons = () => {
 
 const checkUserLoggedIn = () => {
     const isLoggedIn = localStorage.getItem("loggedIn") == "true";
+    const signupBtn = document.getElementById("signup-btn");
+    const profileBtn = document.getElementById("profile-btn");
     if (isLoggedIn) {
         logoutBtn.style.display = "block";
         signupBtn.style.display = "none";
+        profileBtn.style.display = "block";
     } else {
         logoutBtn.style.display = "none";
         signupBtn.style.display = "block";
+        profileBtn.style.display = "none";
     }
 }
 
@@ -30,8 +33,6 @@ const logoutHandler = async () => {
         showToast(err.message, "error");
     }
 }
-
-
 
 checkUserLoggedIn();
 
