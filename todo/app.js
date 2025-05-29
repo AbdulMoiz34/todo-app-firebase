@@ -57,6 +57,8 @@ const addTodoHandler = async (e) => {
 }
 
 const renderTodo = (todo) => {
+    todos.previousElementSibling.style.display = "block";
+
     todos.innerHTML += `<div class="max-w-2xl mx-auto my-4">
   <div class="flex items-start justify-between bg-${todo.completed ? "blue-50" : "white"} border border-${todo.completed ? "blue" : "gray"}-200 rounded-lg shadow-sm p-4 hover:shadow-md transition">
     <div class="flex items-start gap-4 w-full">
